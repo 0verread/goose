@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
@@ -12,15 +13,16 @@ import (
 var selectedItemStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("170"))
 
 type model struct {
-	choices  []string         // items on the to-do list
-	cursor   int              // which to-do list item our cursor is pointing at
-	selected map[int]struct{} // which to-do items are selected
+	todo     []string
+	cursor   int
+	done     map[int]struct{}
+	viewport viewport.Model
 }
 
 func initialModel() model {
 	return model{
-		choices:  []string{"Buy carrots", "Buy celery", "Buy kohlrabi"},
-		selected: make(map[int]struct{}),
+		todo: []string{"Buy carrots", "Buy celery", "Buy kohlrabi"},
+		done: make(map[int]struct{}),
 	}
 }
 
@@ -36,38 +38,31 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		// Cool, what was the actual key pressed?
 		switch msg.String() {
-
-		// These keys should exit the program.
 		case "ctrl+c", "q":
 			tea.ClearScreen()
 			return m, tea.Quit
-
-		// The "up" and "k" keys move the cursor up
 		case "up", "k":
 			if m.cursor > 0 {
 				m.cursor--
 			}
-
-		// The "down" and "j" keys move the cursor down
 		case "down", "j":
-			if m.cursor < len(m.choices)-1 {
+			if m.cursor < len(m.todo)-1 {
 				m.cursor++
 			}
+		// add new item
+		case "i":
+			return m, tea.Quit
 
-		// The "enter" key and the spacebar (a literal space) toggle
-		// the selected state for the item that the cursor is pointing at.
 		case "enter", " ":
-			_, ok := m.selected[m.cursor]
+			_, ok := m.done[m.cursor]
 			if ok {
-				delete(m.selected, m.cursor)
+				delete(m.done, m.cursor)
 			} else {
-				m.selected[m.cursor] = struct{}{}
+				m.done[m.cursor] = struct{}{}
 			}
 		}
 	}
 
-	// Return the updated model to the Bubble Tea runtime for processing.
-	// Note that we're not returning a command.
 	return m, nil
 }
 
@@ -76,7 +71,7 @@ func (m model) View() string {
 	s := ""
 
 	// Iterate over our choices
-	for i, choice := range m.choices {
+	for i, choice := range m.todo {
 
 		// Is the cursor pointing at this choice?
 		cursor := " " // no cursor
@@ -87,7 +82,7 @@ func (m model) View() string {
 
 		// Is this choice selected?
 		checked := " " // not selected
-		if _, ok := m.selected[i]; ok {
+		if _, ok := m.done[i]; ok {
 			checked = "√"
 		}
 
@@ -97,9 +92,10 @@ func (m model) View() string {
 
 	// The footer
 	s += "\nPress q to quit.\n"
+	m.viewport.SetContent("Here is this")
 
 	// Send the UI for rendering
-	return s
+	return fmt.Sprintf("%s\n", m.viewport.View())
 }
 
 var initCmd = &cobra.Command{
