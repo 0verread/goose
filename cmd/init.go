@@ -19,10 +19,12 @@ type model struct {
 	viewport viewport.Model
 }
 
-func initialModel() model {
+func initialModel() tea.Model {
+	vp := viewport.New(80, 20)
+	vp.SetContent("Hii from pancake")
 	return model{
-		todo: []string{"Buy carrots", "Buy celery", "Buy kohlrabi"},
-		done: make(map[int]struct{}),
+		todo:     []string{"Hii", "there", "mama"},
+		viewport: vp,
 	}
 }
 
@@ -89,20 +91,17 @@ func (m model) View() string {
 		// Render the row
 		s += fmt.Sprintf("%s [%s] %s\n", cursor, checked, choice)
 	}
-
-	// The footer
-	s += "\nPress q to quit.\n"
-	m.viewport.SetContent("Here is this")
+	m.viewport.SetContent(s)
 
 	// Send the UI for rendering
-	return fmt.Sprintf("%s\n", m.viewport.View())
+	return m.viewport.View()
 }
 
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "start checklist for the current checkout branch",
 	Run: func(cmd *cobra.Command, args []string) {
-		p := tea.NewProgram(initialModel())
+		p := tea.NewProgram(initialModel(), tea.WithAltScreen())
 		if _, err := p.Run(); err != nil {
 			fmt.Printf("Alas, there's been an error: %v", err)
 			os.Exit(1)
