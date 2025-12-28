@@ -3,7 +3,9 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
+	"github.com/charmbracelet/bubbles/textarea"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -16,14 +18,23 @@ type model struct {
 	todo     []string
 	cursor   int
 	done     map[int]struct{}
+	textarea textarea.Model
 	viewport viewport.Model
 }
 
 func initialModel() tea.Model {
 	vp := viewport.New(80, 20)
-	vp.SetContent("Hii from pancake")
+	ta := textarea.New()
+	ta.Placeholder = "Add new check"
+	ta.Prompt = "|"
+	ta.SetHeight(1)
+	ta.SetWidth(30)
+	ta.ShowLineNumbers = false
+	ta.FocusedStyle.CursorLine = lipgloss.NewStyle()
 	return model{
-		todo:     []string{"Hii", "there", "mama"},
+		todo:     []string{},
+		done:     make(map[int]struct{}),
+		textarea: ta,
 		viewport: vp,
 	}
 }
@@ -33,13 +44,16 @@ func (m model) Init() tea.Cmd {
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var tiCmd tea.Cmd
+	var vpCmd tea.Cmd
+	m.textarea, tiCmd = m.textarea.Update(msg)
+	m.viewport, vpCmd = m.viewport.Update(msg)
 	switch msg := msg.(type) {
-
-	// Is it a key press?
 	case tea.KeyMsg:
 
 		// Cool, what was the actual key pressed?
 		switch msg.String() {
+
 		case "ctrl+c", "q":
 			tea.ClearScreen()
 			return m, tea.Quit
@@ -52,10 +66,21 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor++
 			}
 		// add new item
-		case "i":
-			return m, tea.Quit
 
-		case "enter", " ":
+		case "i":
+			m.textarea.Focus()
+			switch msg.Type {
+			case tea.KeyCtrlC, tea.KeyEsc:
+				fmt.Println(m.textarea.Value())
+				return m, tea.Quit
+			case tea.KeyEnter:
+				m.todo = append(m.todo, m.textarea.Value())
+				m.viewport.SetContent(strings.Join(m.todo, "\n"))
+				m.textarea.Reset()
+				// m.viewport.GotoBottom()
+			}
+
+		case " ":
 			_, ok := m.done[m.cursor]
 			if ok {
 				delete(m.done, m.cursor)
@@ -65,36 +90,31 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	return m, nil
+	return m, tea.Batch(tiCmd, vpCmd)
 }
 
 func (m model) View() string {
-	// The header
 	s := ""
 
-	// Iterate over our choices
 	for i, choice := range m.todo {
 
-		// Is the cursor pointing at this choice?
 		cursor := " " // no cursor
 		if m.cursor == i {
 			cursor = selectedItemStyle.Render(">")
 			choice = selectedItemStyle.Render(choice)
 		}
 
-		// Is this choice selected?
 		checked := " " // not selected
 		if _, ok := m.done[i]; ok {
 			checked = "√"
 		}
 
-		// Render the row
 		s += fmt.Sprintf("%s [%s] %s\n", cursor, checked, choice)
 	}
-	m.viewport.SetContent(s)
+	m.viewport.SetContent(strings.Join(m.todo, "\n"))
 
 	// Send the UI for rendering
-	return m.viewport.View()
+	return fmt.Sprintf("%s\n\n%s", m.viewport.View(), m.textarea.View())
 }
 
 var initCmd = &cobra.Command{
