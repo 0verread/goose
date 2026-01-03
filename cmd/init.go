@@ -5,6 +5,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/0verread/pancake/pkg/ui"
+
 	"github.com/charmbracelet/bubbles/textarea"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
@@ -291,7 +293,7 @@ func (m model) View() string {
 	// Instructions
 	var instructions string
 	if m.inputMode {
-		instructions = footerStyle.Render("💡 Press Enter to add • Esc to cancel • Ctrl+C to quit")
+		instructions = ui.InputModeFooterStyle
 	} else {
 		keyMappings := []string{
 			"i/n: add todo",
@@ -302,7 +304,7 @@ func (m model) View() string {
 			"u: uncomplete all",
 			"q: quit",
 		}
-		instructions = footerStyle.Render("💡 " + strings.Join(keyMappings, " • "))
+		instructions = ui.FooterStyle(keyMappings)
 	}
 
 	// Combine everything
