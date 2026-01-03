@@ -14,82 +14,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Color palette
-var (
-	primaryColor   = lipgloss.Color("#7C3AED") // Purple
-	secondaryColor = lipgloss.Color("#10B981") // Green
-	accentColor    = lipgloss.Color("#F59E0B") // Orange
-	textColor      = lipgloss.Color("#E5E7EB") // Light gray
-	mutedColor     = lipgloss.Color("#9CA3AF") // Muted gray
-	errorColor     = lipgloss.Color("#EF4444") // Red
-	bgColor        = lipgloss.Color("#1F2937") // Dark gray
-)
-
-// Styles
-var (
-	headerStyle = lipgloss.NewStyle().
-			Foreground(primaryColor).
-			Bold(true).
-			Padding(0, 1).
-			MarginBottom(1)
-
-	todoItemStyle = lipgloss.NewStyle().
-			Foreground(textColor).
-			Padding(0, 1)
-
-	selectedItemStyle = lipgloss.NewStyle().
-				Foreground(primaryColor).
-				Bold(true).
-				Background(lipgloss.Color("#374151")).
-				Padding(0, 1)
-
-	completedItemStyle = lipgloss.NewStyle().
-				Foreground(mutedColor).
-				Strikethrough(true).
-				Padding(0, 1)
-
-	selectedCompletedItemStyle = lipgloss.NewStyle().
-					Foreground(secondaryColor).
-					Strikethrough(true).
-					Bold(true).
-					Background(lipgloss.Color("#374151")).
-					Padding(0, 1)
-
-	cursorStyle = lipgloss.NewStyle().
-			Foreground(accentColor).
-			Bold(true)
-
-	checkboxStyle = lipgloss.NewStyle().
-			Foreground(secondaryColor).
-			Bold(true)
-
-	inputBoxStyle = lipgloss.NewStyle().
-			Padding(1, 2).
-			MarginTop(1).
-			MarginBottom(1)
-
-	instructionsStyle = lipgloss.NewStyle().
-				Foreground(mutedColor).
-				Italic(true).
-				Padding(1, 1)
-
-	titleStyle = lipgloss.NewStyle().
-			Foreground(primaryColor).
-			Background(lipgloss.Color("#1E1B4B")).
-			Bold(true).
-			Padding(0, 2).
-			MarginBottom(2)
-
-	containerStyle = lipgloss.NewStyle().
-			Padding(1, 2).
-			BorderForeground(primaryColor)
-
-	footerStyle = lipgloss.NewStyle().
-			Foreground(mutedColor).
-			Padding(1, 0).
-			MarginTop(1)
-)
-
 type model struct {
 	todo      []string
 	cursor    int
@@ -112,7 +36,7 @@ func initialModel() tea.Model {
 	ta.FocusedStyle.CursorLine = lipgloss.NewStyle()
 	ta.BlurredStyle.Base = lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
-		BorderForeground(mutedColor)
+		BorderForeground(ui.MutedColor())
 
 	// Create viewport
 	vp := viewport.New(80, 20)
@@ -233,13 +157,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m model) View() string {
 	// Header
-	title := titleStyle.Render("Checklist")
+	title := ui.TitleStyle.Render("Checklist")
 
 	var content strings.Builder
 
 	// Todo items
 	if len(m.todo) == 0 {
-		emptyMsg := instructionsStyle.Render("No todos yet. Press 'i' to add your first todo!")
+		emptyMsg := ui.InstructionsStyle.Render("No todos yet. Press 'i' to add your first todo!")
 		content.WriteString(emptyMsg)
 	} else {
 		for i, item := range m.todo {
@@ -250,22 +174,22 @@ func (m model) View() string {
 			// Determine if item is completed
 			_, isCompleted := m.done[i]
 			if isCompleted {
-				checkbox = checkboxStyle.Render("[x]")
+				checkbox = ui.CheckboxStyle.Render("[x]")
 			}
 
 			// Apply cursor and styling
 			if m.cursor == i && !m.inputMode {
-				cursor = cursorStyle.Render("▶ ")
+				cursor = ui.CursorStyle.Render("▶ ")
 				if isCompleted {
-					line = selectedCompletedItemStyle.Render(fmt.Sprintf("%s %s", checkbox, item))
+					line = ui.SelectedCompletedItemStyle.Render(fmt.Sprintf("%s %s", checkbox, item))
 				} else {
-					line = selectedItemStyle.Render(fmt.Sprintf("%s %s", checkbox, item))
+					line = ui.SelectedItemStyle.Render(fmt.Sprintf("%s %s", checkbox, item))
 				}
 			} else {
 				if isCompleted {
-					line = completedItemStyle.Render(fmt.Sprintf("%s %s", checkbox, item))
+					line = ui.CompletedItemStyle.Render(fmt.Sprintf("%s %s", checkbox, item))
 				} else {
-					line = todoItemStyle.Render(fmt.Sprintf("%s %s", checkbox, item))
+					line = ui.TodoItemStyle.Render(fmt.Sprintf("%s %s", checkbox, item))
 				}
 			}
 
@@ -279,13 +203,13 @@ func (m model) View() string {
 	var statsMsg string
 	if total > 0 {
 		percentage := float64(completed) / float64(total) * 100
-		statsMsg = instructionsStyle.Render(fmt.Sprintf("Progress: %d/%d completed (%.0f%%)", completed, total, percentage))
+		statsMsg = ui.InstructionsStyle.Render(fmt.Sprintf("Progress: %d/%d completed (%.0f%%)", completed, total, percentage))
 	}
 
 	// Input area
 	var inputArea string
 	if m.inputMode {
-		inputArea = inputBoxStyle.Render(
+		inputArea = ui.InputBoxStyle.Render(
 			fmt.Sprintf("Add new todo:\n%s", m.textarea.View()),
 		)
 	}
@@ -324,7 +248,7 @@ func (m model) View() string {
 	result.WriteString("\n" + instructions)
 
 	// Wrap in container
-	finalContent := containerStyle.Width(min(m.width-4, 80)).Render(result.String())
+	finalContent := ui.ContainerStyle.Width(min(m.width-4, 80)).Render(result.String())
 
 	return finalContent
 }
