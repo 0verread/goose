@@ -1,5 +1,6 @@
+mod commands;
+use crate::commands::push::run;
 use clap::{Parser, Subcommand};
-
 #[derive(Debug, Parser)]
 #[command(name = "goose", version = "0.1.0", about = "A CLI tool for devs")]
 struct Args {
@@ -18,6 +19,6 @@ enum Subc {
 fn main() {
     let args = Args::parse();
     if let Subc::Push {} = &args.subcommand {
-        eprintln!("pushing to the head");
+        run();
     }
 }
