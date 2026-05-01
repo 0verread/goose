@@ -2,6 +2,7 @@
 // git commit asks the user for a commit message
 // git push pushes the changes to the remote repository on the current branch
 
+use colored::Colorize;
 use inquire::Text;
 use std::process::Command;
 
@@ -43,9 +44,9 @@ pub fn run() {
         .args(["branch", "--show-current"])
         .output()
         .expect("");
-    eprintln!(
-        "Pushing on current branch: {}",
-        String::from_utf8_lossy(&current_br.stdout)
+    eprint!(
+        "Pushing on active branch: {}",
+        String::from_utf8_lossy(&current_br.stdout).blue()
     );
     eprintln!("{}", String::from_utf8_lossy(&pwd_output.stdout));
     let user_commit_msg = user_commit_msg();
