@@ -39,7 +39,15 @@ pub fn run() {
         .args(["status", "--porcelain"])
         .output()
         .expect("");
-    println!("{}", String::from_utf8_lossy(&pwd_output.stdout));
+    let current_br = Command::new("git")
+        .args(["branch", "--show-current"])
+        .output()
+        .expect("");
+    eprintln!(
+        "Pushing on current branch: {}",
+        String::from_utf8_lossy(&current_br.stdout)
+    );
+    eprintln!("{}", String::from_utf8_lossy(&pwd_output.stdout));
     let user_commit_msg = user_commit_msg();
     git_add_all();
     git_commit(&user_commit_msg);
