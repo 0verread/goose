@@ -2,7 +2,11 @@ mod commands;
 use crate::commands::push::run;
 use clap::{Parser, Subcommand};
 #[derive(Debug, Parser)]
-#[command(name = "goose", version = "0.1.0", about = "A CLI tool for devs")]
+#[command(
+    name = "goose",
+    version = "0.1.0",
+    about = "minimalistic git workflow management tool"
+)]
 struct Args {
     #[clap(subcommand)]
     subcommand: Subc,

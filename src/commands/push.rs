@@ -14,6 +14,14 @@ fn user_commit_msg() -> String {
     commit_message
 }
 
+fn git_diff_stat() {
+    let diff_output = Command::new("git")
+        .args(["diff", "--shortstat"])
+        .output()
+        .expect("Failed to get diff stat");
+    eprintln!("{}", String::from_utf8_lossy(&diff_output.stdout));
+}
+
 fn git_add_all() {
     Command::new("git")
         .args(["add", "."])
@@ -36,7 +44,7 @@ fn git_push_head() {
 }
 
 pub fn run() {
-    let pwd_output = Command::new("git")
+    let status_output = Command::new("git")
         .args(["status", "--porcelain"])
         .output()
         .expect("");
@@ -45,10 +53,11 @@ pub fn run() {
         .output()
         .expect("");
     eprint!(
-        "Pushing on active branch: {}",
+        "Pushing on branch: {}",
         String::from_utf8_lossy(&current_br.stdout).blue()
     );
-    eprintln!("{}", String::from_utf8_lossy(&pwd_output.stdout));
+    eprintln!("{}", String::from_utf8_lossy(&status_output.stdout));
+    git_diff_stat();
     let user_commit_msg = user_commit_msg();
     git_add_all();
     git_commit(&user_commit_msg);

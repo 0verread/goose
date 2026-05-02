@@ -7,7 +7,7 @@ A better minimalistic way to manage your git workflow + some intesting feature
 **gs push**
 
 - [x] ask user  for commit message
-- [ ] show active branch / where changes are going to be pushed
+- [x] show active branch / where changes are going to be pushed
 - [ ] colored modified, added, deeleted files
 - [ ] get total lines added, deleted
 - [ ] store analytics, local sqldb
