@@ -22,9 +22,10 @@ shows total lines in current dir/files, respect .giotignore. features: TBD
 
 TBD
 
-**gs new <brnach_name>**
+**gs new <branch_name>**
 
-create a new branch with branch_name on main: TBD
+- [x] fetch latest main from origin
+- [x] create and switch to new branch off of main
 
 
 #### LICESNSE
