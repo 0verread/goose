@@ -1,6 +1,6 @@
 mod commands;
-use crate::commands::push::run;
 use clap::{Parser, Subcommand};
+
 #[derive(Debug, Parser)]
 #[command(
     name = "goose",
@@ -14,15 +14,19 @@ struct Args {
 
 #[derive(Debug, Subcommand)]
 enum Subc {
-    // Push current changes  to remote branch
+    /// Stage, commit, and push current changes to remote branch
     Push {},
+    /// Switch to an existing branch
     Switch { branch: String },
+    /// Create a new branch off main and switch to it
     New { branch: String },
 }
 
 fn main() {
     let args = Args::parse();
-    if let Subc::Push {} = &args.subcommand {
-        run();
+    match &args.subcommand {
+        Subc::Push {} => commands::push::run(),
+        Subc::Switch { branch } => commands::switch::run(branch),
+        Subc::New { branch } => commands::new::run(branch),
     }
 }
