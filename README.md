@@ -8,7 +8,7 @@ A better minimalistic way to manage your git workflow + some intesting feature
 
 - [x] ask user  for commit message
 - [x] show active branch / where changes are going to be pushed
-- [ ] colored modified, added, deeleted files
+- [x] colored modified, added, deleted files
 - [ ] get total lines added, deleted
 - [ ] store analytics, local sqldb
 - [ ] AI to generate commit messages based on current changes
