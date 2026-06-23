@@ -1,5 +1,6 @@
 mod commands;
-use crate::commands::push::run;
+use crate::commands::new;
+use crate::commands::push;
 use clap::{Parser, Subcommand};
 #[derive(Debug, Parser)]
 #[command(
@@ -22,7 +23,9 @@ enum Subc {
 
 fn main() {
     let args = Args::parse();
-    if let Subc::Push {} = &args.subcommand {
-        run();
+    match &args.subcommand {
+        Subc::Push {} => push::run(),
+        Subc::New { branch } => new::run(branch),
+        _ => {}
     }
 }

@@ -8,7 +8,7 @@ A better minimalistic way to manage your git workflow + some intesting feature
 
 - [x] ask user  for commit message
 - [x] show active branch / where changes are going to be pushed
-- [ ] colored modified, added, deeleted files
+- [x] colored modified, added, deleted files
 - [ ] get total lines added, deleted
 - [ ] store analytics, local sqldb
 - [ ] AI to generate commit messages based on current changes
@@ -22,9 +22,10 @@ shows total lines in current dir/files, respect .giotignore. features: TBD
 
 TBD
 
-**gs new <brnach_name>**
+**gs new <branch_name>**
 
-create a new branch with branch_name on main: TBD
+- [x] fetch latest main from origin
+- [x] create and switch to new branch off of main
 
 
 #### LICESNSE
