@@ -1,3 +1,6 @@
+mod commands;
+
+use crate::commands::{new, push, switch};
 use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
@@ -9,15 +12,28 @@ struct Args {
 
 #[derive(Debug, Subcommand)]
 enum Subc {
-    // Push current changes  to remote branch
+    /// Push current changes to the remote branch
     Push {},
+    /// Switch to an existing branch
     Switch { branch: String },
+    /// Create a new branch from the latest main
     New { branch: String },
 }
 
 fn main() {
     let args = Args::parse();
-    if let Subc::Push {} = &args.subcommand {
-        eprintln!("pushing to the head");
+    match &args.subcommand {
+        Subc::Push {} => {
+            if let Err(err) = push::run() {
+                eprintln!("error: {err}");
+                std::process::exit(1);
+            }
+        }
+        Subc::Switch { branch } => {
+            switch::run(branch);
+        }
+        Subc::New { branch } => {
+            new::run(branch);
+        }
     }
 }
