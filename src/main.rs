@@ -1,4 +1,6 @@
 mod commands;
+
+use crate::commands::push;
 use clap::{Parser, Subcommand};
 
 #[derive(Debug, Parser)]
@@ -28,5 +30,17 @@ fn main() {
         Subc::Push {} => commands::push::run(),
         Subc::Switch { branch } => commands::switch::run(branch),
         Subc::New { branch } => commands::new::run(branch),
+        Subc::Push {} => {
+            if let Err(err) = push::run() {
+                eprintln!("error: {err}");
+                std::process::exit(1);
+            }
+        }
+        Subc::Switch { branch } => {
+            eprintln!("switch is not implemented yet: {branch}");
+        }
+        Subc::New { branch } => {
+            eprintln!("new is not implemented yet: {branch}");
+        }
     }
 }
