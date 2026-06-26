@@ -1,13 +1,33 @@
 # Goose
 
-Goose is a small developer CLI for wrapping common Git workflows behind short,
-memorable commands.
+A better minimalistic way to manage your git workflow + some intesting feature
 
 The current codebase is a Rust CLI scaffold using `clap` for command parsing.
 It defines the core command surface and has placeholder behavior for `push`
 while the Git operations are still being implemented.
 
-## Current Status
+**gs push**
+
+- [x] ask user  for commit message
+- [x] show active branch / where changes are going to be pushed
+- [x] colored modified, added, deleted files
+- [ ] get total lines added, deleted
+- [ ] store analytics, local sqldb
+- [ ] AI to generate commit messages based on current changes
+- [ ] ability to push all files or some
+
+**gs liens**
+
+shows total lines in current dir/files, respect .giotignore. features: TBD
+
+**gs switch <branch_name>**
+
+TBD
+
+**gs new <branch_name>**
+
+- [x] fetch latest main from origin
+- [x] create and switch to new branch off of main
 
 - Migrated the project from the earlier Go/Bubble Tea prototype to Rust.
 - Added a Cargo project with Rust 2024 edition support.
@@ -21,95 +41,5 @@ while the Git operations are still being implemented.
 - Added an MIT license.
 - Added `.gitignore` and checked in `Cargo.lock` for reproducible builds.
 
-## Intended Git Workflow
-
-The planned shorthand commands are:
-
-```sh
-gs push
-```
-
-Stage all changes, create a commit from user input, and push the current HEAD to
-the remote branch.
-
-```sh
-gs switch <branch_name>
-```
-
-Return to `main`, then switch to the requested branch.
-
-```sh
-gs new <branch_name>
-```
-
-Return to `main`, pull the latest `main` from origin, then create and switch to
-a new branch.
-
-## Implemented Behavior
-
-At the moment, the CLI parses these commands:
-
-```sh
-cargo run -- push
-cargo run -- switch <branch_name>
-cargo run -- new <branch_name>
-```
-
-`push` currently prints a placeholder message:
-
-```text
-pushing to the head
-```
-
-`switch` and `new` are parsed but do not yet execute Git operations.
-
-## Project Layout
-
-```text
-.
-|-- Cargo.toml
-|-- Cargo.lock
-|-- LICENSE
-|-- README.md
-`-- src
-    |-- main.rs
-    `-- commands
-        `-- push.rs
-```
-
-## Development
-
-Build the CLI:
-
-```sh
-cargo build
-```
-
-Run the CLI:
-
-```sh
-cargo run -- <command>
-```
-
-Format the code:
-
-```sh
-cargo fmt
-```
-
-Check the code:
-
-```sh
-cargo check
-```
-
-## Work History
-
-The project started as a Go prototype with a Bubble Tea terminal UI. That work
-included list rendering, input box UI, checklist support, and modularized UI
-components. The current branch later migrated the project to Rust and replaced
-the previous Go code with the present `clap`-based CLI architecture.
-
-## License
-
-This project is licensed under the MIT License. See [LICENSE](./LICENSE).
+#### LICESNSE
+This project is under [MIT LICESNSE](./LICESNSE)
