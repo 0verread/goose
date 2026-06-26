@@ -1,5 +1,5 @@
 mod commands;
-use crate::commands::new;
+
 use crate::commands::push;
 use clap::{Parser, Subcommand};
 #[derive(Debug, Parser)]
@@ -24,8 +24,17 @@ enum Subc {
 fn main() {
     let args = Args::parse();
     match &args.subcommand {
-        Subc::Push {} => push::run(),
-        Subc::New { branch } => new::run(branch),
-        _ => {}
+        Subc::Push {} => {
+            if let Err(err) = push::run() {
+                eprintln!("error: {err}");
+                std::process::exit(1);
+            }
+        }
+        Subc::Switch { branch } => {
+            eprintln!("switch is not implemented yet: {branch}");
+        }
+        Subc::New { branch } => {
+            eprintln!("new is not implemented yet: {branch}");
+        }
     }
 }

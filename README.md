@@ -1,8 +1,10 @@
-# Goose (`gs`)
+# Goose
 
 A minimalistic, opinionated CLI tool to streamline your Git workflow. Written in Rust.
 
-## Overview
+The current codebase is a Rust CLI scaffold using `clap` for command parsing.
+It defines the core command surface and has placeholder behavior for `push`
+while the Git operations are still being implemented.
 
 Goose exposes a single binary — `gs` — that wraps common Git operations with a cleaner, more interactive interface. It shows you exactly what is changing, where it is going, and asks only what it needs before acting.
 
@@ -37,7 +39,17 @@ M  src/main.rs
 A  src/commands/new.rs
  D src/old_file.rs
 
- 2 files changed, 45 insertions(+), 12 deletions(-)
+- Migrated the project from the earlier Go/Bubble Tea prototype to Rust.
+- Added a Cargo project with Rust 2024 edition support.
+- Added `clap` with derive support for CLI parsing.
+- Defined the `goose` binary metadata: name, version, and description.
+- Added subcommands for the intended Git workflow:
+  - `push`
+  - `switch <branch>`
+  - `new <branch>`
+- Added an initial command module at `src/commands/push.rs`.
+- Added an MIT license.
+- Added `.gitignore` and checked in `Cargo.lock` for reproducible builds.
 
 > Write a commit message: add new branch command
 ```
