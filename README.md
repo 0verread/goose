@@ -1,12 +1,24 @@
 ### Goose
 
+A small Rust CLI for wrapping common git workflows.
 
-#### Git Workflow
+#### Usage
 
-- [ ] `gs push` -> `git add . + commit msg <user-input> + git push origin head`
-- [ ] `gs switch <branch_name>` -> `git checkout main + git checkout <branch_name>`
-- [ ] `gs new <branch_name>` -> `git checkout main + git pull origin main + git checkout -b <branch_name>`
+```sh
+cargo run -- push "commit message"
+```
 
+`push` runs:
 
-#### LICESNSE
-This project is under [MIT LICESNSE](./LICESNSE) so feel free to make it your own.
+- `git add .`
+- `git commit -m "<commit message>"`
+- `git push origin HEAD`
+
+#### Planned Git Workflows
+
+- `switch <branch_name>` -> `git checkout main` + `git checkout <branch_name>`
+- `new <branch_name>` -> `git checkout main` + `git pull origin main` + `git checkout -b <branch_name>`
+
+#### License
+
+This project is under the [MIT License](./LICENSE).
